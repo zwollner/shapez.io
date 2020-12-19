@@ -4,8 +4,17 @@ const buildUtils = require("./buildutils");
 function gulptasksCSS($, gulp, buildFolder, browserSync) {
     // The assets plugin copies the files
     const commitHash = buildUtils.getRevision();
+
+    var postcss = require("gulp-postcss");
+    var postcssAssets = require("postcss-assets");
+    var postcssUnprefix = require("postcss-unprefix");
+    var postcssPresetEnv = require("postcss-preset-env");
+    var postcssRoundSubpixels = require("postcss-round-subpixels");
+    var postcssCriticalSplit = require("postcss-critical-split");
+    var sass = require("gulp-sass");
+
     const postcssAssetsPlugin = cachebust =>
-        $.postcssAssets({
+        postcssAssets({
             loadPaths: [path.join(buildFolder, "res", "ui")],
             basePath: buildFolder,
             baseUrl: ".",
@@ -21,8 +30,8 @@ function gulptasksCSS($, gulp, buildFolder, browserSync) {
         const plugins = [postcssAssetsPlugin(cachebust)];
         if (prod) {
             plugins.unshift(
-                $.postcssUnprefix(),
-                $.postcssPresetEnv({
+                postcssUnprefix(),
+                postcssPresetEnv({
                     browsers: ["> 0.1%"],
                 })
             );
@@ -43,7 +52,7 @@ function gulptasksCSS($, gulp, buildFolder, browserSync) {
                         },
                     ],
                 }),
-                $.postcssRoundSubpixels()
+                postcssRoundSubpixels()
             );
         }
         return plugins;
@@ -62,16 +71,16 @@ function gulptasksCSS($, gulp, buildFolder, browserSync) {
         return gulp
             .src("../src/css/main.scss", { cwd: __dirname })
             .pipe($.plumber())
-            .pipe($.sass.sync().on("error", $.sass.logError))
+            .pipe(sass().on("error", sass.logError))
             .pipe(
-                $.postcss([
-                    $.postcssCriticalSplit({
+                postcss([
+                    postcssCriticalSplit({
                         blockTag: "@load-async",
                     }),
                 ])
             )
             .pipe($.rename("async-resources.css"))
-            .pipe($.postcss(postcssPlugins(isProd, { cachebust })))
+            .pipe(postcss(postcssPlugins(isProd, { cachebust })))
             .pipe(gulp.dest(buildFolder))
             .pipe(browserSync.stream());
     }
@@ -95,16 +104,16 @@ function gulptasksCSS($, gulp, buildFolder, browserSync) {
         return gulp
             .src("../src/css/main.scss", { cwd: __dirname })
             .pipe($.plumber())
-            .pipe($.sass.sync().on("error", $.sass.logError))
+            .pipe(sass().on("error", sass.logError))
             .pipe(
-                $.postcss([
-                    $.postcssCriticalSplit({
+                postcss([
+                    postcssCriticalSplit({
                         blockTag: "@load-async",
                         output: "rest",
                     }),
                 ])
             )
-            .pipe($.postcss(postcssPlugins(isProd, { cachebust })))
+            .pipe(postcss(postcssPlugins(isProd, { cachebust })))
             .pipe(gulp.dest(buildFolder))
             .pipe(browserSync.stream());
     }
