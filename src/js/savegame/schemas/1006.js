@@ -103,6 +103,10 @@ export class SavegameInterface_V1006 extends SavegameInterface_V1005 {
 
             // Cutter
             "sprites/blueprints/cutter.png": findCode(MetaCutterBuilding),
+            "sprites/blueprints/cutter-mirrored.png": findCode(
+                MetaCutterBuilding,
+                enumCutterVariants.mirrored
+            ),
             "sprites/blueprints/cutter-quad.png": findCode(MetaCutterBuilding, enumCutterVariants.quad),
 
             // Rotater

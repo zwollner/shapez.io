@@ -10,7 +10,7 @@ import { GameRoot } from "../root";
 import { enumHubGoalRewards } from "../tutorial_goals";
 
 /** @enum {string} */
-export const enumCutterVariants = { quad: "quad" };
+export const enumCutterVariants = { quad: "quad", mirrored: "mirrored", quad_mirrored: "quad-mirrored" };
 
 export class MetaCutterBuilding extends MetaBuilding {
     constructor() {
@@ -21,11 +21,16 @@ export class MetaCutterBuilding extends MetaBuilding {
         return "#7dcda2";
     }
 
+    /**
+     * @param {string} variant
+     */
     getDimensions(variant) {
         switch (variant) {
             case defaultBuildingVariant:
+            case enumCutterVariants.mirrored:
                 return new Vector(2, 1);
             case enumCutterVariants.quad:
+            case enumCutterVariants.quad_mirrored:
                 return new Vector(4, 1);
             default:
                 assertAlways(false, "Unknown cutter variant: " + variant);
@@ -39,7 +44,7 @@ export class MetaCutterBuilding extends MetaBuilding {
      */
     getAdditionalStatistics(root, variant) {
         const speed = root.hubGoals.getProcessorBaseSpeed(
-            variant === enumCutterVariants.quad
+            variant === (enumCutterVariants.quad || enumCutterVariants.quad_mirrored)
                 ? enumItemProcessorTypes.cutterQuad
                 : enumItemProcessorTypes.cutter
         );
@@ -50,10 +55,12 @@ export class MetaCutterBuilding extends MetaBuilding {
      * @param {GameRoot} root
      */
     getAvailableVariants(root) {
+        let variants = [defaultBuildingVariant, enumCutterVariants.mirrored];
         if (root.hubGoals.isRewardUnlocked(enumHubGoalRewards.reward_cutter_quad)) {
-            return [defaultBuildingVariant, enumCutterVariants.quad];
+            variants.push(enumCutterVariants.quad);
+            variants.push(enumCutterVariants.quad_mirrored);
         }
-        return super.getAvailableVariants(root);
+        return variants;
     }
 
     /**
@@ -101,6 +108,20 @@ export class MetaCutterBuilding extends MetaBuilding {
                     { pos: new Vector(0, 0), direction: enumDirection.top },
                     { pos: new Vector(1, 0), direction: enumDirection.top },
                 ]);
+                entity.components.ItemAcceptor.setSlots([
+                    { pos: new Vector(0, 0), directions: [enumDirection.bottom] },
+                ]);
+                entity.components.ItemProcessor.type = enumItemProcessorTypes.cutter;
+                break;
+            }
+            case enumCutterVariants.mirrored: {
+                entity.components.ItemEjector.setSlots([
+                    { pos: new Vector(0, 0), direction: enumDirection.bottom },
+                    { pos: new Vector(1, 0), direction: enumDirection.bottom },
+                ]);
+                entity.components.ItemAcceptor.setSlots([
+                    { pos: new Vector(0, 0), directions: [enumDirection.top] },
+                ]);
                 entity.components.ItemProcessor.type = enumItemProcessorTypes.cutter;
                 break;
             }
@@ -110,6 +131,22 @@ export class MetaCutterBuilding extends MetaBuilding {
                     { pos: new Vector(1, 0), direction: enumDirection.top },
                     { pos: new Vector(2, 0), direction: enumDirection.top },
                     { pos: new Vector(3, 0), direction: enumDirection.top },
+                ]);
+                entity.components.ItemAcceptor.setSlots([
+                    { pos: new Vector(0, 0), directions: [enumDirection.bottom] },
+                ]);
+                entity.components.ItemProcessor.type = enumItemProcessorTypes.cutterQuad;
+                break;
+            }
+            case enumCutterVariants.quad_mirrored: {
+                entity.components.ItemEjector.setSlots([
+                    { pos: new Vector(0, 0), direction: enumDirection.bottom },
+                    { pos: new Vector(1, 0), direction: enumDirection.bottom },
+                    { pos: new Vector(2, 0), direction: enumDirection.bottom },
+                    { pos: new Vector(3, 0), direction: enumDirection.bottom },
+                ]);
+                entity.components.ItemAcceptor.setSlots([
+                    { pos: new Vector(0, 0), directions: [enumDirection.top] },
                 ]);
                 entity.components.ItemProcessor.type = enumItemProcessorTypes.cutterQuad;
                 break;

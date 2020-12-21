@@ -580,7 +580,13 @@ buildings:
         default:
             name: &cutter Cutter
             description: Cuts shapes from top to bottom and outputs both halves. <strong>If you use only one part, be sure to destroy the other part or it will clog and stall!</strong>
+        mirrored:
+            name: *cutter
+            description: Cuts shapes from top to bottom and outputs both halves. <strong>If you use only one part, be sure to destroy the other part or it will clog and stall!</strong>
         quad:
+            name: Cutter (Quad)
+            description: Cuts shapes into four parts. <strong>If you use only one part, be sure to destroy the other parts or it will clog and stall!</strong>
+        quad-mirrored:
             name: Cutter (Quad)
             description: Cuts shapes into four parts. <strong>If you use only one part, be sure to destroy the other parts or it will clog and stall!</strong>
 
@@ -599,9 +605,15 @@ buildings:
         default:
             name: &stacker Stacker
             description: Combines its inputs, on the same layer if possible, otherwise the right input is stacked on top of the left input.
+        mirrored:
+            name: &stacker Stacker
+            description: Combines its inputs, on the same layer if possible, otherwise the right input is stacked on top of the left input.
 
     mixer:
         default:
+            name: &mixer Color Mixer
+            description: Mixes two colors using additive blending.
+        mirrored:
             name: &mixer Color Mixer
             description: Mixes two colors using additive blending.
 
